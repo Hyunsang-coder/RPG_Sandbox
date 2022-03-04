@@ -20,18 +20,20 @@ public class PlayerController : MonoBehaviour
     Rigidbody rb;
 
     public GameObject sword;
+    Health playerHealth;
    
 
     void Start()
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        playerHealth = GetComponent<Health>();
     }
 
 
     void Update()
     {
-
+        if (playerHealth.IsDead) return;
         Move();
         GroundCheck();
         horizontal = Input.GetAxis("Horizontal");

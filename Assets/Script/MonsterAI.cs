@@ -24,14 +24,20 @@ public class MonsterAI : MonoBehaviour
     [SerializeField] float chaseDistance = 3;
     Vector3 nextPosition;
 
+    Health playerHealth; 
 
+    private void OnEnable()
+    {
+        playerHealth = GameObject.FindWithTag("Player").GetComponent<Health>();
+        
+    }
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         //enemyHealth = GetComponent<EnemyHealth>();
         target = GameObject.FindWithTag("Player").transform;
-
+        playerHealth.OnPlayerDeath += PatrolBehavior;
     }
 
     void Update()
@@ -151,6 +157,12 @@ public class MonsterAI : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, chaseRange);
+    }
+
+    void PlayerDeath()
+    {
+        target = null;
+        PatrolBehavior();
     }
 
 }

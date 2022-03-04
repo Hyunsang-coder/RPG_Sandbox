@@ -6,21 +6,23 @@ using UnityEngine.AI;
 
 public class Health : MonoBehaviour
 {
+    
     [SerializeField] float maxHealth = 100;
-    [SerializeField] float currentHealth;
+    public float CurrentHealth { get; private set; }
     bool isDead;
     
     // delegate 선언 = 이 스크립트가 publisher, 여기서만 Action 실행 가능
     public event Action<float> OnHealthPercentChange = delegate { };
+    public event Action OnPlayerDeath = delegate { };
 
     void OnEnable()
     {
-        currentHealth = maxHealth;
+        CurrentHealth = maxHealth;
     }
 
     void Update()
     {
-        if (currentHealth <= 0)
+        if (CurrentHealth <= 0)
         {
             DeathBehavior();
         }
@@ -28,10 +30,7 @@ public class Health : MonoBehaviour
 
     void DeathBehavior()
     {
-        if (isDead)
-        {
-            return;
-        }
+        if (isDead){return;}
 
         if (this.gameObject.tag == "Enemy")
         {
@@ -40,14 +39,26 @@ public class Health : MonoBehaviour
 
             Destroy(gameObject, 2f);
         }
+
+        if (this.gameObject.tag == "Player")
+        {
+            GetComponent<Animator>().SetTrigger("Die");
+        }
+
+        OnPlayerDeath();
         isDead = true;
     }
 
     public void SubtractHealth(int damage)
     {
-        currentHealth -= damage;
-        float currentHealthPct = currentHealth / maxHealth;
+        CurrentHealth -= damage;
+        float currentHealthPct = CurrentHealth / maxHealth;
         OnHealthPercentChange(currentHealthPct);    
+    }
+
+    public bool IsDead
+    {
+        get { return isDead; }
     }
 
 }
