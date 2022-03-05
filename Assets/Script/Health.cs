@@ -1,19 +1,16 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Health : MonoBehaviour
 {
-    
+    public event Action<float> OnHealthPctChange = delegate { };
+
     [SerializeField] float maxHealth = 100;
     public float CurrentHealth { get; private set; }
-    bool isDead;
-    
-    // delegate 선언 = 이 스크립트가 publisher, 여기서만 Action 실행 가능
-    public event Action<float> OnHealthPercentChange = delegate { };
-    public event Action OnPlayerDeath = delegate { };
+    public bool IsDead { get; private set; }
 
     void OnEnable()
     {
@@ -30,35 +27,17 @@ public class Health : MonoBehaviour
 
     void DeathBehavior()
     {
-        if (isDead){return;}
+        if (IsDead) { return; }
 
-        if (this.gameObject.tag == "Enemy")
-        {
-            GetComponent<NavMeshAgent>().isStopped = true;
-            GetComponent<Animator>().SetTrigger("Dead");
+        GetComponent<Animator>().SetTrigger("Die");
 
-            Destroy(gameObject, 2f);
-        }
-
-        if (this.gameObject.tag == "Player")
-        {
-            GetComponent<Animator>().SetTrigger("Die");
-        }
-
-        OnPlayerDeath();
-        isDead = true;
+        IsDead = true;
     }
 
     public void SubtractHealth(int damage)
     {
         CurrentHealth -= damage;
-        float currentHealthPct = CurrentHealth / maxHealth;
-        OnHealthPercentChange(currentHealthPct);    
-    }
-
-    public bool IsDead
-    {
-        get { return isDead; }
+        OnHealthPctChange(damage);
     }
 
 }

@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Healthbar : MonoBehaviour
+public class HealthBar : MonoBehaviour
 {
     [SerializeField] Image healthImage;
     [SerializeField] float updateSpeed = 0.5f;
+    [SerializeField] float positionOffset = 2f;
 
-
-    private void Awake()
+    MonsterHealth monsterHealth;
+    
+    // 헬스 바 로직 등록
+    public void SetMonsterHealth(MonsterHealth monsterHealth)
     {
-        GetComponentInParent<Health>().OnHealthPercentChange += HandleHealthChange;
+        this.monsterHealth = monsterHealth;
+        monsterHealth.OnHealthPctChange += HandleHealthChange;
     }
 
+    //헬스 바 로직
     void HandleHealthChange(float pct)
     {
         StartCoroutine(UpdateHealthBar(pct));
@@ -31,13 +36,20 @@ public class Healthbar : MonoBehaviour
         }
 
         healthImage.fillAmount = pct;
-        
     }
     
+    
+    //헬스 바 위치
     void LateUpdate()
     {
-        transform.LookAt(Camera.main.transform);
-        transform.Rotate(0, 180, 0);
+        if (monsterHealth == null) return;
+        transform.position = Camera.main.WorldToScreenPoint(monsterHealth.transform.position + Vector3.up * positionOffset);
+    }
 
+    //헬스 바 로직 등록 취소
+    private void OnDisable()
+    {
+        if (monsterHealth == null) return;
+        monsterHealth.OnHealthPctChange -= HandleHealthChange;
     }
 }

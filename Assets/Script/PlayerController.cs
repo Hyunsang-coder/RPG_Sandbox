@@ -60,9 +60,10 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         sword.GetComponent<BoxCollider>().enabled = true;
         sword.GetComponentInChildren<TrailRenderer>().enabled = true;
-        yield return new WaitForSeconds(0.8f);
-        sword.GetComponentInChildren<TrailRenderer>().enabled = false;
+        yield return new WaitForSeconds(0.5f);
         sword.GetComponent<BoxCollider>().enabled = false;
+        sword.GetComponentInChildren<TrailRenderer>().enabled = false;
+        
     }
 
 
