@@ -7,8 +7,8 @@ public class HealthBarController : MonoBehaviour
     
 
     //Key값인 MonsterHealth에 따라 value인 인스턴스를 추가/삭제 
-    Dictionary<MonsterHealth, HealthBar> healthBars = new Dictionary<MonsterHealth, HealthBar>();
-    [SerializeField] HealthBar healthBarPrefab;
+    Dictionary<MonsterHealth, MonsterHealthBar> healthBars = new Dictionary<MonsterHealth, MonsterHealthBar>();
+    [SerializeField] MonsterHealthBar healthBarPrefab;
 
     // 헬스 바 추가/제거 로직 등록 
     private void Awake()

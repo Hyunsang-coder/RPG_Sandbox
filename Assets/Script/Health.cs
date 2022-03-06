@@ -37,7 +37,8 @@ public class Health : MonoBehaviour
     public void SubtractHealth(int damage)
     {
         CurrentHealth -= damage;
-        OnHealthPctChange(damage);
+        float percentage = CurrentHealth / maxHealth;
+        OnHealthPctChange(percentage);
     }
 
 }
