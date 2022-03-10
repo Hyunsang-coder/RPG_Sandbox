@@ -20,6 +20,8 @@ public class MonsterHealth : MonoBehaviour
     {
         CurrentHealth = maxHealth;
         OnHealthAdded(this);
+        Debug.Log("MonsterHealth Enabled +, HP: " + CurrentHealth);
+
     }
 
     void Update()
@@ -34,10 +36,15 @@ public class MonsterHealth : MonoBehaviour
     {
         if (IsDead) { return; }
 
+        if (this.gameObject.tag == "Dragon")
+        {
+            GetComponent<NavMeshAgent>().baseOffset = -0.6f;
+            GetComponent<MeshCollider>().enabled = false;
+        }
         GetComponent<NavMeshAgent>().isStopped = true;
         GetComponent<Animator>().SetTrigger("Die");
 
-        Destroy(gameObject, 2f);
+        Destroy(gameObject, 10f);
         OnHealthRemoved(this); // 헬스 바 없애기
 
         IsDead = true;

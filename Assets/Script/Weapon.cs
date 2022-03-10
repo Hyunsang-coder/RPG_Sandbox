@@ -4,22 +4,14 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    [SerializeField] int weaponDamage = 10;
-    
+    public int Damage{get;set;}
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Dragon")
         {
-            other.gameObject.GetComponent<Health>().SubtractHealth(weaponDamage);
+            other.gameObject.GetComponent<MonsterHealth>().SubtractHealth(Damage);
         }
-
-        if (other.gameObject.tag == "Enemy")
-        {
-            other.gameObject.GetComponent<MonsterHealth>().SubtractHealth(weaponDamage);
-        }
-
-
     }
 
 }

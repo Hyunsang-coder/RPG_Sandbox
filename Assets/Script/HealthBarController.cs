@@ -5,16 +5,16 @@ using UnityEngine;
 public class HealthBarController : MonoBehaviour
 {
     
-
     //Key값인 MonsterHealth에 따라 value인 인스턴스를 추가/삭제 
     Dictionary<MonsterHealth, MonsterHealthBar> healthBars = new Dictionary<MonsterHealth, MonsterHealthBar>();
     [SerializeField] MonsterHealthBar healthBarPrefab;
 
     // 헬스 바 추가/제거 로직 등록 
-    private void Awake()
+    void Awake()
     {
         MonsterHealth.OnHealthAdded += AddHealthBar;
         MonsterHealth.OnHealthRemoved += RemoveHealthBar;
+        Debug.Log("BarController Awaked");
     }
     
     // 헬스 바 인스턴스화 
@@ -24,7 +24,7 @@ public class HealthBarController : MonoBehaviour
         if (!healthBars.ContainsKey(monsterHealth))
         {
             var healthBar = Instantiate(healthBarPrefab, transform);
-            healthBars.Add(monsterHealth, healthBar);
+            healthBars.Add(monsterHealth,healthBar);
             healthBar.SetMonsterHealth(monsterHealth);
         }
     }
@@ -37,10 +37,6 @@ public class HealthBarController : MonoBehaviour
         {
             Destroy(healthBars[monsterHealth].gameObject);
             healthBars.Remove(monsterHealth);
-        }
-        else
-        {
-            return;
         }
 
     }

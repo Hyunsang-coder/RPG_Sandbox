@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class PlayerHealthBar : MonoBehaviour
 {
     [SerializeField] Image healthImage;
+    [SerializeField] Image staminaImage;
     [SerializeField] float updateSpeed = 0.5f;
 
     Health playerHealth;
@@ -15,6 +16,7 @@ public class PlayerHealthBar : MonoBehaviour
     {
         playerHealth = FindObjectOfType<Health>();
         playerHealth.OnHealthPctChange += HandleHealthChange;
+        playerHealth.OnStaminaPctChange += HandleStaminaChange;
     }
     
     //헬스 바 로직
@@ -38,7 +40,27 @@ public class PlayerHealthBar : MonoBehaviour
     }
 
 
-   
+    void HandleStaminaChange(float pct)
+    {
+        StartCoroutine(UpdateStaminaBar(pct));
+    }
+
+    IEnumerator UpdateStaminaBar(float pct)
+    {
+        float preChangePct = staminaImage.fillAmount;
+        float elapsed = 0;
+        while (elapsed < updateSpeed)
+        {
+            elapsed += Time.deltaTime;
+            staminaImage.fillAmount = Mathf.Lerp(preChangePct, pct, elapsed / updateSpeed);
+            yield return null;
+        }
+
+        staminaImage.fillAmount = pct;
+    }
+
+
+
     //헬스 바 로직 등록 취소
     private void OnDisable()
     {

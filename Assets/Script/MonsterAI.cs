@@ -7,45 +7,40 @@ using UnityEngine.AI;
 
 public class MonsterAI : MonoBehaviour
 {
-    [SerializeField] Transform target;
-    [SerializeField] float chaseRange = 5f;
-    [SerializeField] float turnSpeed = 5f;
+    [SerializeField] protected Transform target;
+    [SerializeField] protected float chaseRange = 5f;
+    [SerializeField] protected float turnSpeed = 5f;
 
 
-    NavMeshAgent navMeshAgent;
-    Animator anim;
-    float distanceToTarget = Mathf.Infinity;
-    [SerializeField] bool isProvoked = false;
+    protected NavMeshAgent navMeshAgent;
+    protected Animator anim;
+    protected float distanceToTarget = Mathf.Infinity;
+    public bool isProvoked = false;
     //EnemyHealth enemyHealth;
 
-    [SerializeField] PatrolPath patrolPath;
-    int currentWaypointIndex = 0;
-    [SerializeField] float waypointTolerance = 2;
-    [SerializeField] float chaseDistance = 3;
-    Vector3 nextPosition;
+    [SerializeField] protected PatrolPath patrolPath;
+    protected int currentWaypointIndex = 0;
+    [SerializeField] protected float waypointTolerance = 2;
+    protected Vector3 nextPosition;
+    protected float timeElpased;
+    [SerializeField] protected float suspicionTime =3;
+    protected MonsterHealth monsterHealth;
 
-    MonsterHealth playerHealth; 
-
-    private void OnEnable()
-    {
-        playerHealth = GameObject.FindWithTag("Player").GetComponent<MonsterHealth>();
-        
-    }
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
-        //enemyHealth = GetComponent<EnemyHealth>();
+        monsterHealth = GetComponent<MonsterHealth>();
         target = GameObject.FindWithTag("Player").transform;
     }
 
     void Update()
     {
-        //if (enemyHealth.IsDead())
-        //{
-        //    enabled = false;  // = this.enabled
-        //    navMeshAgent.enabled = false;
-        //}
+        if (monsterHealth.IsDead)
+        {
+            navMeshAgent.enabled = false;
+            return;
+        }
 
 
         distanceToTarget = Vector3.Distance(target.position, transform.position);
@@ -56,11 +51,18 @@ public class MonsterAI : MonoBehaviour
         else if (distanceToTarget <= chaseRange)
         {
             isProvoked = true;
+            timeElpased = 0;
         }
         if (distanceToTarget > chaseRange)
         {
             isProvoked = false;
-            PatrolBehavior();
+            timeElpased += Time.deltaTime;
+
+            if (timeElpased > suspicionTime)
+            {
+                PatrolBehavior();
+                timeElpased = 0;
+            }
             //GetComponent<Animator>().SetTrigger("Idle");
         }
         if (navMeshAgent.velocity.magnitude > 0)
@@ -69,10 +71,11 @@ public class MonsterAI : MonoBehaviour
         }
         else anim.SetBool("isMove", false);
 
-
     }
 
-    private void PatrolBehavior()
+
+    
+    protected void PatrolBehavior()
     {
         if (patrolPath != null)
         {
@@ -85,26 +88,26 @@ public class MonsterAI : MonoBehaviour
         navMeshAgent.SetDestination(nextPosition);
     }
 
-    private bool AtWaypoint()
+    protected bool AtWaypoint()
     {
         return Vector3.Distance(transform.position, GetCurrentWaypoint()) < waypointTolerance;
     }
 
-    private void CycleWaypoint()
+    protected void CycleWaypoint()
     {
         currentWaypointIndex = patrolPath.GetNextPoint(currentWaypointIndex);
         // currentWaypointIndex는 0 - 1 - 2 - 0 - 1 - 2... 반복
     }
 
-    private Vector3 GetCurrentWaypoint()
+    protected Vector3 GetCurrentWaypoint()
     {
         return patrolPath.GetWaypointPosition(currentWaypointIndex);
         // currentWaypointIndex에 해당하는 waypoint의 Vector3 값 반환
     }
-    private bool InAttackRangeOfPlayer()
+    protected bool InAttackRangeOfPlayer()
     {
         float distanceToPlayer = Vector3.Distance(target.transform.position, transform.position);
-        return distanceToPlayer < chaseDistance;
+        return distanceToPlayer < chaseRange;
     }
 
     public void OnDamageTaken()
@@ -112,7 +115,7 @@ public class MonsterAI : MonoBehaviour
         isProvoked = true;
     }
 
-    void FaceTarget()
+    protected void FaceTarget()
     {
         Vector3 direction = (target.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
@@ -123,7 +126,7 @@ public class MonsterAI : MonoBehaviour
 
 
 
-    void EngageTarget()
+    protected void EngageTarget()
     {
         FaceTarget();
         if (distanceToTarget > navMeshAgent.stoppingDistance)
@@ -138,13 +141,13 @@ public class MonsterAI : MonoBehaviour
 
     }
 
-    void ChaseTarget()
+    protected void ChaseTarget()
     {
         //GetComponent<Animator>().SetBool("Attack", false);
         //GetComponent<Animator>().SetTrigger("Move");
         navMeshAgent.SetDestination(target.position);
     }
-    void AttackTarget()
+    public virtual void AttackTarget()
     {
         //anim.SetBool("isAttack", true);
         anim.SetTrigger("Attack");
@@ -152,7 +155,7 @@ public class MonsterAI : MonoBehaviour
     }
 
     //Gizmo 
-    void OnDrawGizmosSelected()
+    protected void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, chaseRange);

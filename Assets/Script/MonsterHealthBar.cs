@@ -43,7 +43,12 @@ public class MonsterHealthBar : MonoBehaviour
     void LateUpdate()
     {
         if (monsterHealth == null) return;
-        transform.position = Camera.main.WorldToScreenPoint(monsterHealth.transform.position + Vector3.up * positionOffset);
+        if (monsterHealth.gameObject.tag == "Dragon")
+        {
+            transform.position = Camera.main.WorldToScreenPoint(monsterHealth.transform.position + Vector3.up * positionOffset * 1.9f);
+            transform.localScale = new Vector3 (2, 1.8f, 0);
+        }
+        else { transform.position = Camera.main.WorldToScreenPoint(monsterHealth.transform.position + Vector3.up * positionOffset); }
     }
 
     //헬스 바 로직 등록 취소
