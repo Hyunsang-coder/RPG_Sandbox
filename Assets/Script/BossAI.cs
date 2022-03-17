@@ -59,11 +59,12 @@ public class BossAI : MonsterAI
         if (isAttackBehavior) return;
         if (isCloseRange)
         {
-            StopCoroutine(AttackBehavior());
+            StopAllCoroutines();
             StartCoroutine(CloseAttackBehavior());
         }
         else
         {
+            StopAllCoroutines();
             StartCoroutine(AttackBehavior());
         }
         
@@ -76,13 +77,9 @@ public class BossAI : MonsterAI
         Debug.Log("tail attack");
         navMeshAgent.isStopped = true;
         yield return new WaitForSeconds(1f);
-        navMeshAgent.SetDestination(target.position + offsetToTarget);
         navMeshAgent.isStopped = false;
-        yield return new WaitForSeconds(1.5f);
-        navMeshAgent.SetDestination(target.position);
-        
-        isAttackBehavior = false;
         yield return null;
+        isAttackBehavior = false;
     }
 
     IEnumerator AttackBehavior()
@@ -117,6 +114,5 @@ public class BossAI : MonsterAI
         }
         yield return new WaitForSeconds(0.5f);
         isAttackBehavior = false;
-        yield return null;
     }
 }

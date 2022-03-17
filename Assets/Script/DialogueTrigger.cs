@@ -8,10 +8,6 @@ public class DialogueTrigger : MonoBehaviour
     public Transform NPCTransform;
     public Vector3 offset = new Vector3();
 
-    private void Start()
-    {
-        
-    }
     public void TriggerDialogue()
     {
         DialogueManager.instance.StartConversation(dialougue);

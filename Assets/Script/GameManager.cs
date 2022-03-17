@@ -8,32 +8,23 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject GameOverCanvas;
     
-    void OnAwake()
-    {
-        
-    }
     void OnEnable()
     {
         Health.OnDeath += GameOverMenu;;
         GameOverCanvas.SetActive(false);
     }
 
-    private void Start()
-    {
-
-        
-    }
 
     void GameOverMenu()
     {
         GameOverCanvas.SetActive(true);
-        //Instantiate(GameOverCanvas, GameOverCanvas.transform.position, Quaternion.identity);
+        
     }
     
     public void ReloadScene()
     {
-
+        int currentScene = SceneManager.GetActiveScene().buildIndex;
         GameOverCanvas.SetActive(false);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(currentScene);
     }
 }
