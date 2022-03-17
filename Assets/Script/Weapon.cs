@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
     {
         if (other.gameObject.tag == "Enemy" || other.gameObject.tag == "Dragon")
         {
-            other.gameObject.GetComponent<MonsterHealth>().SubtractHealth(Damage);
+            other.gameObject.GetComponent<EnemyHealth>().SubtractHealth(Damage);
         }
     }
 

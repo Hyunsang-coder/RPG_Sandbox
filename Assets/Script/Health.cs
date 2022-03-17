@@ -8,6 +8,7 @@ public class Health : MonoBehaviour
 {
     public event Action<float> OnHealthPctChange = delegate { };
     public event Action<float> OnStaminaPctChange = delegate { };
+    public static event Action OnDeath = delegate { };
 
     [SerializeField] float maxHealth = 100;
     [SerializeField] float maxStamina = 100;
@@ -38,6 +39,8 @@ public class Health : MonoBehaviour
         GetComponent<Animator>().SetTrigger("Die");
 
         IsDead = true;
+        OnDeath(); 
+        Debug.Log(OnDeath);
     }
 
     public void SubtractHealth(int damage)
@@ -70,4 +73,6 @@ public class Health : MonoBehaviour
         Debug.Log("normal!");
         yield return null;
     }
+
+    
 }

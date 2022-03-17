@@ -7,36 +7,36 @@ using UnityEngine.AI;
 
 public class MonsterAI : MonoBehaviour
 {
-    [SerializeField] protected Transform target;
-    [SerializeField] protected float chaseRange = 5f;
-    [SerializeField] protected float turnSpeed = 5f;
+    public Transform target;
+    public float chaseRange = 5f;
+    public float turnSpeed = 5f;
 
 
-    protected NavMeshAgent navMeshAgent;
-    protected Animator anim;
-    protected float distanceToTarget = Mathf.Infinity;
+    public NavMeshAgent navMeshAgent;
+    public Animator anim;
+    public float distanceToTarget = Mathf.Infinity;
     public bool isProvoked = false;
     //EnemyHealth enemyHealth;
 
-    [SerializeField] protected PatrolPath patrolPath;
-    protected int currentWaypointIndex = 0;
-    [SerializeField] protected float waypointTolerance = 2;
-    protected Vector3 nextPosition;
-    protected float timeElpased;
-    [SerializeField] protected float suspicionTime =3;
-    protected MonsterHealth monsterHealth;
+    public PatrolPath patrolPath;
+    public int currentWaypointIndex = 0;
+    public float waypointTolerance = 2;
+    public Vector3 nextPosition;
+    public float timeElpased;
+    public float suspicionTime =3;
+    public EnemyHealth enemyHealth;
 
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
-        monsterHealth = GetComponent<MonsterHealth>();
+        enemyHealth = GetComponent<EnemyHealth>();
         target = GameObject.FindWithTag("Player").transform;
     }
 
     void Update()
     {
-        if (monsterHealth.IsDead)
+        if (enemyHealth.isDead)
         {
             navMeshAgent.enabled = false;
             return;
@@ -75,7 +75,7 @@ public class MonsterAI : MonoBehaviour
 
 
     
-    protected void PatrolBehavior()
+    public void PatrolBehavior()
     {
         if (patrolPath != null)
         {
@@ -88,23 +88,23 @@ public class MonsterAI : MonoBehaviour
         navMeshAgent.SetDestination(nextPosition);
     }
 
-    protected bool AtWaypoint()
+    public bool AtWaypoint()
     {
         return Vector3.Distance(transform.position, GetCurrentWaypoint()) < waypointTolerance;
     }
 
-    protected void CycleWaypoint()
+    public void CycleWaypoint()
     {
         currentWaypointIndex = patrolPath.GetNextPoint(currentWaypointIndex);
         // currentWaypointIndex는 0 - 1 - 2 - 0 - 1 - 2... 반복
     }
 
-    protected Vector3 GetCurrentWaypoint()
+    public Vector3 GetCurrentWaypoint()
     {
         return patrolPath.GetWaypointPosition(currentWaypointIndex);
         // currentWaypointIndex에 해당하는 waypoint의 Vector3 값 반환
     }
-    protected bool InAttackRangeOfPlayer()
+    public bool InAttackRangeOfPlayer()
     {
         float distanceToPlayer = Vector3.Distance(target.transform.position, transform.position);
         return distanceToPlayer < chaseRange;
@@ -115,7 +115,7 @@ public class MonsterAI : MonoBehaviour
         isProvoked = true;
     }
 
-    protected void FaceTarget()
+    public void FaceTarget()
     {
         Vector3 direction = (target.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
@@ -126,9 +126,9 @@ public class MonsterAI : MonoBehaviour
 
 
 
-    protected void EngageTarget()
+    public void EngageTarget()
     {
-        FaceTarget();
+        //FaceTarget();
         if (distanceToTarget > navMeshAgent.stoppingDistance)
         {
             ChaseTarget();
@@ -141,21 +141,23 @@ public class MonsterAI : MonoBehaviour
 
     }
 
-    protected void ChaseTarget()
+    public void ChaseTarget()
     {
+        FaceTarget();
         //GetComponent<Animator>().SetBool("Attack", false);
         //GetComponent<Animator>().SetTrigger("Move");
         navMeshAgent.SetDestination(target.position);
     }
     public virtual void AttackTarget()
     {
+        FaceTarget();
         //anim.SetBool("isAttack", true);
         anim.SetTrigger("Attack");
         
     }
 
     //Gizmo 
-    protected void OnDrawGizmosSelected()
+    public void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, chaseRange);

@@ -5,21 +5,26 @@ using UnityEngine.AI;
 
 public class BossAI : MonsterAI
 {
-    bool isAttackBehavior;
+    [SerializeField] Vector3 offsetToTarget = new Vector3();
+    [SerializeField] GameObject breathPrefab;
+    [SerializeField] Transform breathPosition;
+    [SerializeField] bool isAttackBehavior;
+    [SerializeField] bool isCloseRange;
+
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
-        monsterHealth = GetComponent<MonsterHealth>();
+        enemyHealth = GetComponent<EnemyHealth>();
         target = GameObject.FindWithTag("Player").transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(monsterHealth.IsDead)
+        if(enemyHealth.isDead)
         {
-            navMeshAgent.enabled = false;
+            //navMeshAgent.enabled = false;
             return;
         }
 
@@ -45,41 +50,72 @@ public class BossAI : MonsterAI
             }
         }
         
+        isCloseRange = distanceToTarget < 3? true: false;
     }
 
     
     public override void AttackTarget()
     {
         if (isAttackBehavior) return;
-        StartCoroutine(AttackBehavior());
+        if (isCloseRange)
+        {
+            StopCoroutine(AttackBehavior());
+            StartCoroutine(CloseAttackBehavior());
+        }
+        else
+        {
+            StartCoroutine(AttackBehavior());
+        }
+        
+    }
+
+    IEnumerator CloseAttackBehavior()
+    {
+        isAttackBehavior = true;
+        anim.SetTrigger("TailAttack");
+        Debug.Log("tail attack");
+        navMeshAgent.isStopped = true;
+        yield return new WaitForSeconds(1f);
+        navMeshAgent.SetDestination(target.position + offsetToTarget);
+        navMeshAgent.isStopped = false;
+        yield return new WaitForSeconds(1.5f);
+        navMeshAgent.SetDestination(target.position);
+        
+        isAttackBehavior = false;
+        yield return null;
     }
 
     IEnumerator AttackBehavior()
     {
         isAttackBehavior = true;
-        int randomNo = Random.Range(0, 4);
-        yield return new WaitForSeconds(0.5f);
+        int randomNo = Random.Range(0, 3);
+        yield return new WaitForSeconds(0.2f);
         switch (randomNo)
         {
             case 0:
                 anim.SetTrigger("Breath");
+                Instantiate(breathPrefab, breathPosition.position, breathPosition.rotation);
                 Debug.Log("Breath");
+                navMeshAgent.isStopped = true;
+                yield return new WaitForSeconds(1.3f);
+                navMeshAgent.isStopped = false;
                 break;
+            
             case 1:
-                //
-                anim.SetTrigger("TailAttack");
-                Debug.Log("Tail Attack");
-                break;
-            case 2:
                 //
                 anim.SetTrigger("Header");
                 Debug.Log("Header Attack");
-                break;
-            case 3:
+                navMeshAgent.isStopped = true;
+                yield return new WaitForSeconds(1.3f);
+                navMeshAgent.isStopped = false;
                 break;
 
+            //case 2:
+            //    //
+            //    
+
         }
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
         isAttackBehavior = false;
         yield return null;
     }

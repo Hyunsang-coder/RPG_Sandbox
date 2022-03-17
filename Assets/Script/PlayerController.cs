@@ -21,19 +21,20 @@ public class PlayerController : MonoBehaviour
     float attackFactor = 1;
     Animator anim;
     Rigidbody rb;
-
     public GameObject sword;
     Health playerHealth;
 
     [SerializeField] int attackDamage = 10;
     [SerializeField] int powerAttackDamage = 50;
 
+    NPCBehavior npcBehavior;
 
     void Start()
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         playerHealth = GetComponent<Health>();
+        npcBehavior = FindObjectOfType<NPCBehavior>();
     }
 
 
@@ -115,6 +116,7 @@ public class PlayerController : MonoBehaviour
   
     private void Attack()
     {
+        if (npcBehavior.interactionReady) return;
         anim.SetTrigger("Slash");
         StartCoroutine(AttackVFX(0.3f, 0.6f, attackDamage));
     }

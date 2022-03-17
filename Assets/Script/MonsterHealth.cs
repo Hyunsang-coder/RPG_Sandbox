@@ -14,12 +14,13 @@ public class MonsterHealth : MonoBehaviour
     [SerializeField] float maxHealth = 100;
     public float CurrentHealth { get; private set; }
     public bool IsDead { get; private set; }
-    
+
     // Enable과 동시에 hp 100 채우고, 헬스 바 인스턴스화 
     void OnEnable()
     {
         CurrentHealth = maxHealth;
         OnHealthAdded(this);
+
         Debug.Log("MonsterHealth Enabled +, HP: " + CurrentHealth);
 
     }
