@@ -5,11 +5,9 @@ using UnityEngine.AI;
 
 public class BossAI : MonsterAI
 {
-    [SerializeField] Vector3 offsetToTarget = new Vector3();
     [SerializeField] GameObject breathPrefab;
     [SerializeField] Transform breathPosition;
-    [SerializeField] bool isAttackBehavior;
-    [SerializeField] bool isCloseRange;
+    [SerializeField] bool isAttacking;
 
     void Start()
     {
@@ -19,26 +17,25 @@ public class BossAI : MonsterAI
         target = GameObject.FindWithTag("Player").transform;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(enemyHealth.isDead)
+        
+        if (enemyHealth.isDead || isStunned)
         {
-            //navMeshAgent.enabled = false;
+            navMeshAgent.isStopped = false;
             return;
         }
 
-        distanceToTarget = Vector3.Distance(target.position, transform.position);
         if (isProvoked)
         {
             EngageTarget();
-            timeElpased = 0;
         }
-        else if (distanceToTarget <= chaseRange)
+        else if (TargetInRange())
         {
             isProvoked = true;
+            timeElpased = 0;
         }
-        if (distanceToTarget > chaseRange)
+        if (!TargetInRange())
         {
             isProvoked = false;
             timeElpased += Time.deltaTime;
@@ -50,43 +47,41 @@ public class BossAI : MonsterAI
             }
         }
         
-        isCloseRange = distanceToTarget < 3? true: false;
+        //isCloseRange = distanceToTarget < 3? true: false;
     }
 
     
     public override void AttackTarget()
     {
-        if (isAttackBehavior) return;
-        if (isCloseRange)
+        if (isAttacking) return;
+
+        if (distanceToTarget < navMeshAgent.stoppingDistance - 1)
         {
-            StopAllCoroutines();
             StartCoroutine(CloseAttackBehavior());
+            return;
         }
-        else
-        {
-            StopAllCoroutines();
-            StartCoroutine(AttackBehavior());
-        }
+        
+        StartCoroutine(AttackBehavior());
         
     }
 
     IEnumerator CloseAttackBehavior()
     {
-        isAttackBehavior = true;
+        isAttacking = true;
         anim.SetTrigger("TailAttack");
         Debug.Log("tail attack");
-        navMeshAgent.isStopped = true;
-        yield return new WaitForSeconds(1f);
+
+        yield return new WaitForSeconds(2f);
+
         navMeshAgent.isStopped = false;
-        yield return null;
-        isAttackBehavior = false;
+        isAttacking = false;
     }
 
     IEnumerator AttackBehavior()
     {
-        isAttackBehavior = true;
+        isAttacking = true;
         int randomNo = Random.Range(0, 3);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.5f);
         switch (randomNo)
         {
             case 0:
@@ -96,23 +91,39 @@ public class BossAI : MonsterAI
                 navMeshAgent.isStopped = true;
                 yield return new WaitForSeconds(1.3f);
                 navMeshAgent.isStopped = false;
+                isAttacking = false;
                 break;
             
-            case 1:
+            case 1: case 2:
                 //
                 anim.SetTrigger("Header");
                 Debug.Log("Header Attack");
                 navMeshAgent.isStopped = true;
                 yield return new WaitForSeconds(1.3f);
                 navMeshAgent.isStopped = false;
+                isAttacking = false;
                 break;
-
-            //case 2:
-            //    //
-            //    
+                
 
         }
         yield return new WaitForSeconds(0.5f);
-        isAttackBehavior = false;
+    }
+
+
+    public override IEnumerator StunnedBehavior(float stunTime)
+    {
+        isStunned = true;
+        isAttacking = true;
+
+        anim.SetBool("isStunned", true);
+
+        yield return new WaitForSeconds(stunTime);
+
+        navMeshAgent.isStopped = false;
+        anim.SetBool("isStunned", false);
+        isAttacking = false;
+        isStunned = false;
+
+        Debug.Log("Stunned Ended");
     }
 }

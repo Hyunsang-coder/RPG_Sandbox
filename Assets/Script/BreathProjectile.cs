@@ -10,7 +10,7 @@ public class BreathProjectile : MonoBehaviour
 
     void OnEnable()
     {
-        Destroy(this, 3);
+        Destroy(gameObject, 3);
         BreathDamage = 30;
     }
 

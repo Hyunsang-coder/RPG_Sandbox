@@ -115,6 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthImage: {fileID: 4247421567055466346}
+  updateSpeed: 1
 --- !u!1 &3068708850654846907
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,6 @@ public class DialogueManager : MonoBehaviour
     public Text nameText;
     public Text dialogueText;
 
-    public bool isConversation;
     
     public static DialogueManager instance;
     public Animator animator;
@@ -34,7 +33,6 @@ public class DialogueManager : MonoBehaviour
     public void StartConversation(Dialogue dialogue)
     {
         animator.SetBool("isOpen", true);
-        isConversation = true;
         nameText.text = dialogue.name;
         Debug.Log("Conversation started with " + dialogue.name);
 
@@ -73,10 +71,8 @@ public class DialogueManager : MonoBehaviour
     }
 
 
-    private void EndDialouge()
+    public void EndDialouge()
     {
         animator.SetBool("isOpen", false);
-        Debug.Log("End of Conversation");
-        isConversation = false;
     }
 }

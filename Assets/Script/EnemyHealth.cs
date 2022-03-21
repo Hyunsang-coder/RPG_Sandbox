@@ -32,7 +32,6 @@ public class EnemyHealth: MonoBehaviour
         if (this.gameObject.tag == "Dragon")
         {
             GetComponent<NavMeshAgent>().baseOffset = -0.6f;
-            GetComponent<MeshCollider>().enabled = false;
         }
         GetComponent<NavMeshAgent>().isStopped = true;
         GetComponent<Animator>().SetTrigger("Die");

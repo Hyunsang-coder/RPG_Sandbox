@@ -24,6 +24,7 @@ public class NPCBehavior : MonoBehaviour
         {
             interactionReady = false;
             triggerButton.image.enabled = false;
+            DialogueManager.instance.EndDialouge();
         }
     }
 }

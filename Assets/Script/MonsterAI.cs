@@ -25,7 +25,7 @@ public class MonsterAI : MonoBehaviour
     public float timeElpased;
     public float suspicionTime =3;
     public EnemyHealth enemyHealth;
-
+    public bool isStunned;
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -34,26 +34,30 @@ public class MonsterAI : MonoBehaviour
         target = GameObject.FindWithTag("Player").transform;
     }
 
+    public bool TargetInRange()
+    {
+        distanceToTarget = Vector3.Distance(target.position, transform.position);
+        return distanceToTarget < chaseRange? true: false;
+    }
+
     void Update()
     {
-        if (enemyHealth.isDead)
+        if (enemyHealth.isDead || isStunned)
         {
-            navMeshAgent.enabled = false;
+            navMeshAgent.isStopped = false;
             return;
         }
 
-
-        distanceToTarget = Vector3.Distance(target.position, transform.position);
         if (isProvoked)
         {
             EngageTarget();
         }
-        else if (distanceToTarget <= chaseRange)
+        else if (TargetInRange())
         {
             isProvoked = true;
             timeElpased = 0;
         }
-        if (distanceToTarget > chaseRange)
+        if (!TargetInRange())
         {
             isProvoked = false;
             timeElpased += Time.deltaTime;
@@ -63,7 +67,7 @@ public class MonsterAI : MonoBehaviour
                 PatrolBehavior();
                 timeElpased = 0;
             }
-            //GetComponent<Animator>().SetTrigger("Idle");
+            
         }
         if (navMeshAgent.velocity.magnitude > 0)
         {
@@ -74,7 +78,30 @@ public class MonsterAI : MonoBehaviour
     }
 
 
-    
+    public virtual void GetStunned(float stunTime)
+    {
+        StopAllCoroutines();
+        StartCoroutine(StunnedBehavior(stunTime));
+    }
+
+    public virtual IEnumerator StunnedBehavior(float stunTime)
+    {
+        isStunned = true;
+
+        //anim.SetTrigger("Stunned");
+        anim.SetBool("isStunned", true);
+        
+        yield return new WaitForSeconds(stunTime);
+
+        navMeshAgent.isStopped = false;
+        anim.SetBool("isStunned", false);
+        isStunned = false;
+
+        Debug.Log("Stunned Ended");
+        yield break;
+    }
+
+
     public void PatrolBehavior()
     {
         if (patrolPath != null)
@@ -144,14 +171,11 @@ public class MonsterAI : MonoBehaviour
     public void ChaseTarget()
     {
         FaceTarget();
-        //GetComponent<Animator>().SetBool("Attack", false);
-        //GetComponent<Animator>().SetTrigger("Move");
         navMeshAgent.SetDestination(target.position);
     }
     public virtual void AttackTarget()
     {
         FaceTarget();
-        //anim.SetBool("isAttack", true);
         anim.SetTrigger("Attack");
         
     }
@@ -163,4 +187,5 @@ public class MonsterAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, chaseRange);
     }
 
+    
 }

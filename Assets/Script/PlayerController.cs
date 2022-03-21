@@ -19,22 +19,27 @@ public class PlayerController : MonoBehaviour
     bool isRolling;
     bool isAttacking;
     float attackFactor = 1;
-    Animator anim;
+
+    Animator animator;
     Rigidbody rb;
     public GameObject sword;
+    public Transform throwPos;
+    public GameObject throwablePrefab;
     Health playerHealth;
 
     [SerializeField] int attackDamage = 10;
     [SerializeField] int powerAttackDamage = 50;
+    [SerializeField] float throwVelocity = 10;
 
     NPCBehavior npcBehavior;
 
     void Start()
     {
-        anim = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         playerHealth = GetComponent<Health>();
         npcBehavior = FindObjectOfType<NPCBehavior>();
+        
     }
 
 
@@ -48,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    float pressTime = 0;
     private void OtherActions()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -62,11 +68,21 @@ public class PlayerController : MonoBehaviour
         {
             Roll();
         }
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            pressTime += Time.deltaTime;
+            if (pressTime > 3)
+            {
+                PowerAttack();
+                pressTime = 0;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            PowerAttack();
+            StartCoroutine(ThrowItem());
         }
     }
+
 
     private void GetAxis()
     {
@@ -110,14 +126,14 @@ public class PlayerController : MonoBehaviour
         transform.Translate(moveVector * moveSpeed * Time.deltaTime , Space.World);
         //transform.position += moveVector * moveSpeed * Time.deltaTime;
 
-        anim.SetFloat("MoveSpeed", moveSpeed);
+        animator.SetFloat("MoveSpeed", moveSpeed);
         
     }
   
     private void Attack()
     {
         if (npcBehavior.interactionReady) return;
-        anim.SetTrigger("Slash");
+        animator.SetTrigger("Slash");
         StartCoroutine(AttackVFX(0.3f, 0.6f, attackDamage));
     }
 
@@ -129,6 +145,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         sword.GetComponentInChildren<TrailRenderer>().enabled = true;
         sword.GetComponent<BoxCollider>().enabled = true;
+        Debug.Log("Damage!!");
         yield return new WaitForSeconds(finishTime);
         sword.GetComponent<BoxCollider>().enabled = false;
         sword.GetComponentInChildren<TrailRenderer>().enabled = false;
@@ -140,9 +157,9 @@ public class PlayerController : MonoBehaviour
 
     void PowerAttack()
     {
-        anim.SetTrigger("PowerAttack");
+        animator.SetTrigger("PowerAttack");
         playerHealth.SubtractStamina(10);
-        StartCoroutine(AttackVFX(0.5f, 0.8f, powerAttackDamage));
+        StartCoroutine(AttackVFX(0.6f, 0.6f, powerAttackDamage));
     }
 
 
@@ -150,7 +167,7 @@ public class PlayerController : MonoBehaviour
     {
         if (onGround)
         {
-            anim.SetTrigger("Jump");
+            animator.SetTrigger("Jump");
             playerHealth.SubtractStamina(10);
         }
     }
@@ -165,7 +182,7 @@ public class PlayerController : MonoBehaviour
         if (!isRolling)
         {
             isRolling = true;
-            anim.SetTrigger("Roll");
+            animator.SetTrigger("Roll");
             playerHealth.SubtractStamina(10);
         }
     }
@@ -173,8 +190,34 @@ public class PlayerController : MonoBehaviour
     public void RollFinished()
     {
         isRolling = false;
-        anim.applyRootMotion = true;
+        animator.applyRootMotion = true;
     }
 
-    
+
+
+    IEnumerator ThrowItem()
+    {
+        isAttacking = true;
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(1f);
+        InstantiateThrowable();
+        yield return new WaitForSeconds(0.5f);
+        isAttacking = false;
+        yield break;
+    }
+
+    public void InstantiateThrowable()
+    {
+        if (throwablePrefab != null || throwPos != null)
+        {
+            GameObject tempThrowable;
+            tempThrowable = Instantiate(throwablePrefab, throwPos.position, Quaternion.identity);
+
+            
+            Rigidbody rigidBody = tempThrowable.GetComponent<Rigidbody>();
+            rigidBody.AddForce(transform.forward * throwVelocity, ForceMode.Impulse);
+            rigidBody.AddTorque(Vector3.up * throwVelocity, ForceMode.Impulse);
+        }
+    }
+
 }

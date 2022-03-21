@@ -8,7 +8,7 @@ public class EnemyHealthBar : MonoBehaviour
 {
     // 체력 게이지가 될 이미지. 잊지 말고 에디터 상에서 할당해 주자.
     [SerializeField] Image healthImage;
-    float updateSpeed = 2;
+    [SerializeField] float updateSpeed = 2;
 
     // Action event에 함수 등록 
     private void Awake()
