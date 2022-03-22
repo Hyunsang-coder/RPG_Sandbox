@@ -10,6 +10,7 @@ TagManager:
   - Breath
   - GameOverCanvas
   - ThrowPos
+  - PickupItem
   layers:
   - Default
   - TransparentFX

@@ -30,8 +30,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int attackDamage = 10;
     [SerializeField] int powerAttackDamage = 50;
     [SerializeField] float throwVelocity = 10;
+    
+    [SerializeField]
+    public bool PickupReady { get; private set; }
+
 
     NPCBehavior npcBehavior;
+    GameManager gameManager;
+
+    public event Action OnItemPickup = delegate { };
+    public event Action OnThrow = delegate { };
+
 
     void Start()
     {
@@ -39,9 +48,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerHealth = GetComponent<Health>();
         npcBehavior = FindObjectOfType<NPCBehavior>();
-        
+        gameManager = FindObjectOfType<GameManager>();
     }
-
 
     void Update()
     {
@@ -79,10 +87,36 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            StartCoroutine(ThrowItem());
+            if (gameManager.flashBangQty > 0)
+            {
+                OnThrow();
+                StartCoroutine(ThrowItem());
+            }
+            else
+            {
+                return;
+            }
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (PickupReady)
+            {
+                Pickup();
+            }
+            else return;
+        }
+        
     }
 
+    [SerializeField] bool pickupDone;
+    void Pickup()
+    {
+        OnItemPickup();
+        pickupDone = true;
+        //애니메이션
+        //이벤트 호출
+    }
 
     private void GetAxis()
     {
@@ -217,6 +251,21 @@ public class PlayerController : MonoBehaviour
             Rigidbody rigidBody = tempThrowable.GetComponent<Rigidbody>();
             rigidBody.AddForce(transform.forward * throwVelocity, ForceMode.Impulse);
             rigidBody.AddTorque(Vector3.up * throwVelocity, ForceMode.Impulse);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        
+        if (other.gameObject.tag == "PickupItem")
+        {
+            PickupReady = true;
+        }
+        if (pickupDone)
+        {
+            PickupItem item = other.gameObject.GetComponent<PickupItem>();
+            Destroy(other.gameObject);
+            pickupDone = false;
         }
     }
 

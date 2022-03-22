@@ -3,22 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerHealthBar : MonoBehaviour
+public class PlayerUI : MonoBehaviour
 {
     [SerializeField] Image healthImage;
     [SerializeField] Image staminaImage;
     [SerializeField] float updateSpeed = 0.5f;
+    [SerializeField] Text flashBangQty;
 
     Health playerHealth;
+    GameManager gameManager;
+    PlayerController playerController;
 
     // 헬스 바 로직 등록
     private void OnEnable()
     {
         playerHealth = FindObjectOfType<Health>();
+        playerController = FindObjectOfType<PlayerController>();
+        gameManager = FindObjectOfType<GameManager>();
         playerHealth.OnHealthPctChange += HandleHealthChange;
         playerHealth.OnStaminaPctChange += HandleStaminaChange;
     }
-    
+
+    private void Start()
+    {
+        UpdateFlashBangQty();
+    }
     //헬스 바 로직
     void HandleHealthChange(float pct)
     {
@@ -57,6 +66,11 @@ public class PlayerHealthBar : MonoBehaviour
         }
 
         staminaImage.fillAmount = pct;
+    }
+
+    public void UpdateFlashBangQty()
+    {
+        flashBangQty.text = "x " + gameManager.flashBangQty.ToString();
     }
 
 
