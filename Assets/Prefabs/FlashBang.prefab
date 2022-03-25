@@ -128,9 +128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 366838beea2e6ce439d506bc67f13bf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToDestory: 4
-  timeToExplode: 2
-  stunTime: 10
+  timeToDestory: 2.5
+  timeToExplode: 1.5
+  stunTime: 4
 --- !u!135 &3589403424299627070
 SphereCollider:
   m_ObjectHideFlags: 0

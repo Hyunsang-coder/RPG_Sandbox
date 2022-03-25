@@ -9,8 +9,10 @@ public class Throwable : MonoBehaviour
     ParticleSystem particleSystem;
     Rigidbody rigidbody;
     SphereCollider collider;
+    MeshRenderer meshRendere;
     void Awake()
     {
+        meshRendere = GetComponent<MeshRenderer>();
         particleSystem = GetComponentInChildren<ParticleSystem>();
         rigidbody = GetComponentInChildren<Rigidbody>();
         collider = GetComponentInChildren<SphereCollider>();
@@ -25,6 +27,7 @@ public class Throwable : MonoBehaviour
     }
     IEnumerator Explosion() 
     {   yield return new WaitForSeconds(timeToExplode);
+        meshRendere.enabled = false ;
         rigidbody.freezeRotation = true;
         transform.rotation = Quaternion.Euler(0, 0, 0);
         particleSystem.Play();

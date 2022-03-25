@@ -48,7 +48,6 @@ public class PlayerUI : MonoBehaviour
         healthImage.fillAmount = pct;
     }
 
-
     void HandleStaminaChange(float pct)
     {
         StartCoroutine(UpdateStaminaBar(pct));
@@ -74,10 +73,10 @@ public class PlayerUI : MonoBehaviour
     }
 
 
-
     //헬스 바 로직 등록 취소
     private void OnDisable()
     {
         playerHealth.OnHealthPctChange -= HandleHealthChange;
+        playerHealth.OnStaminaPctChange -= HandleStaminaChange;
     }
 }

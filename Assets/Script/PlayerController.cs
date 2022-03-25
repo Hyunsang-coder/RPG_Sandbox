@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -33,7 +32,6 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField]
     public bool PickupReady { get; private set; }
-
 
     NPCBehavior npcBehavior;
     GameManager gameManager;
@@ -108,14 +106,14 @@ public class PlayerController : MonoBehaviour
         }
         
     }
+    
 
     [SerializeField] bool pickupDone;
     void Pickup()
     {
+        animator.SetTrigger("Pickup");
         OnItemPickup();
         pickupDone = true;
-        //애니메이션
-        //이벤트 호출
     }
 
     private void GetAxis()
@@ -166,7 +164,7 @@ public class PlayerController : MonoBehaviour
   
     private void Attack()
     {
-        if (npcBehavior.interactionReady) return;
+        if (npcBehavior != null && npcBehavior.interactionReady) return;
         animator.SetTrigger("Slash");
         StartCoroutine(AttackVFX(0.3f, 0.6f, attackDamage));
     }
@@ -253,7 +251,7 @@ public class PlayerController : MonoBehaviour
             rigidBody.AddTorque(Vector3.up * throwVelocity, ForceMode.Impulse);
         }
     }
-
+    bool openReady;
     private void OnTriggerStay(Collider other)
     {
         
@@ -263,10 +261,11 @@ public class PlayerController : MonoBehaviour
         }
         if (pickupDone)
         {
-            PickupItem item = other.gameObject.GetComponent<PickupItem>();
+            var item = other.gameObject.GetComponent<PickupItem>();
             Destroy(other.gameObject);
             pickupDone = false;
         }
+
     }
 
 }
