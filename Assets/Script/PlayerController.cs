@@ -35,9 +35,7 @@ public class PlayerController : MonoBehaviour
 
     NPCBehavior npcBehavior;
     GameManager gameManager;
-
-    public event Action OnItemPickup = delegate { };
-    public event Action OnThrow = delegate { };
+    PlayerUI playerUI;
 
 
     void Start()
@@ -47,6 +45,7 @@ public class PlayerController : MonoBehaviour
         playerHealth = GetComponent<Health>();
         npcBehavior = FindObjectOfType<NPCBehavior>();
         gameManager = FindObjectOfType<GameManager>();
+        playerUI = FindObjectOfType<PlayerUI>();
     }
 
     void Update()
@@ -87,7 +86,6 @@ public class PlayerController : MonoBehaviour
         {
             if (gameManager.flashBangQty > 0)
             {
-                OnThrow();
                 StartCoroutine(ThrowItem());
             }
             else
@@ -104,16 +102,24 @@ public class PlayerController : MonoBehaviour
             }
             else return;
         }
-        
-    }
-    
 
-    [SerializeField] bool pickupDone;
+
+        if(Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            DrinkBehavior();
+        }
+    }
+
+    private void DrinkBehavior()
+    {
+        //애니메이션
+        gameManager.UsePostion();
+    }
+
     void Pickup()
     {
         animator.SetTrigger("Pickup");
-        OnItemPickup();
-        pickupDone = true;
+        PickupReady = false;
     }
 
     private void GetAxis()
@@ -226,9 +232,10 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
     IEnumerator ThrowItem()
     {
+        gameManager.flashBangQty--;
+        playerUI.UpdateLv_ItemUI();
         isAttacking = true;
         animator.SetTrigger("Throw");
         yield return new WaitForSeconds(1f);
@@ -251,21 +258,13 @@ public class PlayerController : MonoBehaviour
             rigidBody.AddTorque(Vector3.up * throwVelocity, ForceMode.Impulse);
         }
     }
-    bool openReady;
+    
     private void OnTriggerStay(Collider other)
     {
-        
         if (other.gameObject.tag == "PickupItem")
         {
             PickupReady = true;
         }
-        if (pickupDone)
-        {
-            var item = other.gameObject.GetComponent<PickupItem>();
-            Destroy(other.gameObject);
-            pickupDone = false;
-        }
-
     }
 
 }

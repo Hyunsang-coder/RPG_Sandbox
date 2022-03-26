@@ -1989,7 +1989,6 @@ MonoBehaviour:
   attackDamage: 10
   powerAttackDamage: 50
   throwVelocity: 2
-  pickupDone: 0
 --- !u!114 &1554631715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2005,6 +2004,8 @@ MonoBehaviour:
   maxHealth: 100
   maxStamina: 100
   invincileTime: 1
+  currentHealth: 0
+  currentStamina: 0
 --- !u!1 &8629636251874691742
 GameObject:
   m_ObjectHideFlags: 0

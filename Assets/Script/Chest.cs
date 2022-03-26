@@ -16,7 +16,6 @@ public class Chest : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-
         if (other.gameObject.tag == "Player")
         {
             openReady = true;
@@ -30,15 +29,14 @@ public class Chest : MonoBehaviour
             StartCoroutine(ItemPopup());
         }
         else return;
-        
     }
 
     IEnumerator ItemPopup()
     {
-        anim.GetComponent<Animator>().SetTrigger("Open");
-        yield return new WaitForSeconds(0.3f);
-        Instantiate(content, spawnPoint.position, Quaternion.identity);
         boxUsed = true;
+        anim.GetComponent<Animator>().SetTrigger("Open");
+        yield return new WaitForSeconds(1f);
+        Instantiate(content, spawnPoint.position, Quaternion.identity);
         yield return null;
     }
 

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Health : MonoBehaviour
 {
@@ -10,26 +9,80 @@ public class Health : MonoBehaviour
     public event Action<float> OnStaminaPctChange = delegate { };
     public static event Action OnDeath = delegate { };
 
-    [SerializeField] float maxHealth = 100;
-    [SerializeField] float maxStamina = 100;
+    public int maxHealth = 100;
+    public int maxStamina = 100;
     [SerializeField] float invincileTime = 1f;
-    public float CurrentHealth { get; private set; }
-    public float CurrentStamina { get; private set; }
+
+    public float currentHealth;
+    public float currentStamina;
     public bool IsDead { get; private set; }
     public bool IsInvincible{ get; set; }
+    public ParticleSystem particle;
 
     void OnEnable()
     {
-        CurrentHealth = maxHealth;
-        CurrentStamina = maxStamina;
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+        GameManager.OnLevelUP += LevelUpBonus;
+        
+    }
+
+    private void Start()
+    {
+        particle.Stop();
+    }
+
+    void LevelUpBonus(int level)
+    {
+        // 레벨에 따른 full 체력 스태미나 상승
+        switch (level)
+        {
+            case 2:
+                maxHealth = 150;
+                maxStamina = 150;
+                break;
+            case 3:
+                maxHealth = 200;
+                maxStamina = 200;
+                break;
+            case 4:
+                maxHealth = 250;
+                maxStamina = 250;
+                break;
+            case 5:
+                maxHealth = 300;
+                maxStamina = 300;
+                break;
+        }
+        ShowLvUpEffect();
+    }
+
+    private void ShowLvUpEffect()
+    {
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+        OnHealthPctChange(100);
+        OnStaminaPctChange(100);
+        particle.Play();
     }
 
     void Update()
     {
-        if (CurrentHealth <= 0)
+        if (currentHealth <= 0)
         {
             DeathBehavior();
         }
+
+        //NaturalHeal();
+    }
+
+    private void NaturalHeal()
+    {
+        if (currentHealth < maxHealth)
+        {
+            currentHealth += 1 *Time.deltaTime*0.5f;
+        }
+        return;
     }
 
     void DeathBehavior()
@@ -40,21 +93,34 @@ public class Health : MonoBehaviour
 
         IsDead = true;
         OnDeath(); 
-        Debug.Log(OnDeath);
     }
 
     public void SubtractHealth(int damage)
     {
         if (IsInvincible) return;
-        CurrentHealth -= damage;
-        float percentage = CurrentHealth / maxHealth;
+        currentHealth -= damage;
+        float percentage = currentHealth / maxHealth;
         OnHealthPctChange(percentage);
     }
 
     public void SubtractStamina(int stamina)
     {
-        CurrentStamina -= stamina;
-        float percentage = CurrentStamina / maxStamina;
+        currentStamina -= stamina;
+        float percentage = currentStamina / maxStamina;
+        OnStaminaPctChange(percentage);
+    }
+
+    public void HealHealth(int damage)
+    {
+        currentHealth += damage;
+        float percentage = currentHealth / maxHealth;
+        OnHealthPctChange(percentage);
+    }
+
+    public void HealStamina(int stamina)
+    {
+        currentStamina += stamina;
+        float percentage = currentStamina / maxStamina;
         OnStaminaPctChange(percentage);
     }
 
@@ -74,5 +140,10 @@ public class Health : MonoBehaviour
         yield return null;
     }
 
-    
+    private void OnDisable()
+    {
+        GameManager.OnLevelUP -= LevelUpBonus;
+    }
+
+
 }

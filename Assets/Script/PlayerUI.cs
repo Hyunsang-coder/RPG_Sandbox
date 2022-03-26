@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,30 +7,37 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] Image healthImage;
     [SerializeField] Image staminaImage;
     [SerializeField] float updateSpeed = 0.5f;
-    [SerializeField] Text flashBangQty;
+    [SerializeField] Text flashBangQtyTxt;
+    [SerializeField] Text playerLvTxt;
+    [SerializeField] Text HPTxt;
+    [SerializeField] Text StaminaTxt;
 
-    Health playerHealth;
+    Health health;
     GameManager gameManager;
     PlayerController playerController;
 
     // 헬스 바 로직 등록
     private void OnEnable()
     {
-        playerHealth = FindObjectOfType<Health>();
+        health = FindObjectOfType<Health>();
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
-        playerHealth.OnHealthPctChange += HandleHealthChange;
-        playerHealth.OnStaminaPctChange += HandleStaminaChange;
+        health.OnHealthPctChange += HandleHealthChange;
+        health.OnStaminaPctChange += HandleStaminaChange;
     }
 
     private void Start()
     {
-        UpdateFlashBangQty();
+        UpdateLv_ItemUI();
+        HandleHealthChange(100);
+        HandleStaminaChange(100);
     }
     //헬스 바 로직
     void HandleHealthChange(float pct)
     {
-        StartCoroutine(UpdateHealthBar(pct));
+        healthImage.fillAmount = pct;
+        //StartCoroutine(UpdateHealthBar(pct));
+        UpdateLv_ItemUI();
     }
 
     IEnumerator UpdateHealthBar(float pct)
@@ -50,7 +56,9 @@ public class PlayerUI : MonoBehaviour
 
     void HandleStaminaChange(float pct)
     {
-        StartCoroutine(UpdateStaminaBar(pct));
+        staminaImage.fillAmount = pct;
+        UpdateLv_ItemUI();
+        //StartCoroutine(UpdateStaminaBar(pct));
     }
 
     IEnumerator UpdateStaminaBar(float pct)
@@ -67,16 +75,19 @@ public class PlayerUI : MonoBehaviour
         staminaImage.fillAmount = pct;
     }
 
-    public void UpdateFlashBangQty()
+    public void UpdateLv_ItemUI()
     {
-        flashBangQty.text = "x " + gameManager.flashBangQty.ToString();
+        flashBangQtyTxt.text = "x " + gameManager.flashBangQty.ToString();
+        playerLvTxt.text = gameManager.playerLevel.ToString();
+        HPTxt.text = health.currentHealth.ToString("0.#") + " / " + health.maxHealth.ToString();
+        StaminaTxt.text = health.currentStamina.ToString("0.#") + " / " + health.maxStamina.ToString();
     }
 
 
     //헬스 바 로직 등록 취소
     private void OnDisable()
     {
-        playerHealth.OnHealthPctChange -= HandleHealthChange;
-        playerHealth.OnStaminaPctChange -= HandleStaminaChange;
+        health.OnHealthPctChange -= HandleHealthChange;
+        health.OnStaminaPctChange -= HandleStaminaChange;
     }
 }

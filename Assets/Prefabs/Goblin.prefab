@@ -104,7 +104,7 @@ RectTransform:
   m_GameObject: {fileID: 4043971401835457527}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.02, y: 0.02, z: 0}
+  m_LocalScale: {x: 0.008927974, y: 0.008927974, z: 0}
   m_Children:
   - {fileID: 2495995910611016363}
   - {fileID: 45981620784380655}
@@ -113,7 +113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1.77}
+  m_AnchoredPosition: {x: -0.025, y: 1.509}
   m_SizeDelta: {x: 300, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1008264066200395101
@@ -465,7 +465,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7341893604879378708}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.03, y: 0.020000458, z: 7.1499996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -509,8 +509,8 @@ MonoBehaviour:
   target: {fileID: 0}
   chaseRange: 6
   turnSpeed: 5
-  navMeshAgent: {fileID: 0}
-  anim: {fileID: 0}
+  navMeshAgent: {fileID: 7341893604879378709}
+  anim: {fileID: 7341893604879378705}
   distanceToTarget: Infinity
   isProvoked: 0
   patrolPath: {fileID: 0}
@@ -519,7 +519,7 @@ MonoBehaviour:
   nextPosition: {x: 0, y: 0, z: 0}
   timeElpased: 0
   suspicionTime: 3
-  enemyHealth: {fileID: 0}
+  enemyHealth: {fileID: 7341893604879378716}
   isStunned: 0
 --- !u!136 &7341893604879378711
 CapsuleCollider:
@@ -586,6 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 100
+  enemyXP: 100
   isDead: 0
 --- !u!1 &7341893604910974148
 GameObject:

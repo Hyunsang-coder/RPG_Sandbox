@@ -19,7 +19,8 @@ public class EnemyHealthBar : MonoBehaviour
     // 등록되는 함수 내용: 이미지의 fillAmount를 healthPercent와 같게 함 
     void HandleHealthChange(float healthPercent)
     {
-        StartCoroutine(UpdateHealthBar(healthPercent));
+        //StartCoroutine(UpdateHealthBar(healthPercent));
+        healthImage.fillAmount = healthPercent;
     }
 
     IEnumerator UpdateHealthBar(float healthPercent)
