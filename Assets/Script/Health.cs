@@ -103,23 +103,23 @@ public class Health : MonoBehaviour
         OnHealthPctChange(percentage);
     }
 
-    public void SubtractStamina(int stamina)
+    public void SubtractStamina(int consumption)
     {
-        currentStamina -= stamina;
+        currentStamina -= consumption;
         float percentage = currentStamina / maxStamina;
         OnStaminaPctChange(percentage);
     }
 
-    public void HealHealth(int damage)
+    public void HealHealth(int recovery)
     {
-        currentHealth += damage;
+        currentHealth += recovery;
         float percentage = currentHealth / maxHealth;
         OnHealthPctChange(percentage);
     }
 
-    public void HealStamina(int stamina)
+    public void HealStamina(int recovery)
     {
-        currentStamina += stamina;
+        currentStamina += recovery;
         float percentage = currentStamina / maxStamina;
         OnStaminaPctChange(percentage);
     }

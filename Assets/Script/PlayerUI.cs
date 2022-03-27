@@ -7,7 +7,12 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] Image healthImage;
     [SerializeField] Image staminaImage;
     [SerializeField] float updateSpeed = 0.5f;
+
+    [SerializeField] Text PotionTxt;
     [SerializeField] Text flashBangQtyTxt;
+    
+    
+    
     [SerializeField] Text playerLvTxt;
     [SerializeField] Text HPTxt;
     [SerializeField] Text StaminaTxt;
@@ -78,6 +83,7 @@ public class PlayerUI : MonoBehaviour
     public void UpdateLv_ItemUI()
     {
         flashBangQtyTxt.text = "x " + gameManager.flashBangQty.ToString();
+        PotionTxt.text = "x " + gameManager.potionQty.ToString();
         playerLvTxt.text = gameManager.playerLevel.ToString();
         HPTxt.text = health.currentHealth.ToString("0.#") + " / " + health.maxHealth.ToString();
         StaminaTxt.text = health.currentStamina.ToString("0.#") + " / " + health.maxStamina.ToString();

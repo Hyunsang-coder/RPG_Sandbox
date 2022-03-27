@@ -24,12 +24,13 @@ public class PlayerController : MonoBehaviour
     public GameObject sword;
     public Transform throwPos;
     public GameObject throwablePrefab;
-    Health playerHealth;
+    Health health;
 
     [SerializeField] int attackDamage = 10;
     [SerializeField] int powerAttackDamage = 50;
     [SerializeField] float throwVelocity = 10;
-    
+    [SerializeField] int healPoint = 50;
+
     [SerializeField]
     public bool PickupReady { get; private set; }
 
@@ -42,7 +43,7 @@ public class PlayerController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
-        playerHealth = GetComponent<Health>();
+        health = GetComponent<Health>();
         npcBehavior = FindObjectOfType<NPCBehavior>();
         gameManager = FindObjectOfType<GameManager>();
         playerUI = FindObjectOfType<PlayerUI>();
@@ -50,7 +51,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (playerHealth.IsDead) return;
+        if (health.IsDead) return;
         Move();
         GroundCheck();
         GetAxis();
@@ -88,10 +89,7 @@ public class PlayerController : MonoBehaviour
             {
                 StartCoroutine(ThrowItem());
             }
-            else
-            {
-                return;
-            }
+            else return;
         }
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -104,16 +102,21 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if(Input.GetKeyDown(KeyCode.Alpha0))
+        if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            DrinkBehavior();
+            if (gameManager.potionQty > 0)
+            {
+                DrinkBehavior();
+            }
+            else return;
         }
     }
 
     private void DrinkBehavior()
     {
-        //애니메이션
+        animator.SetTrigger("Drink");
         gameManager.UsePostion();
+        health.HealHealth(healPoint);
     }
 
     void Pickup()
@@ -196,7 +199,7 @@ public class PlayerController : MonoBehaviour
     void PowerAttack()
     {
         animator.SetTrigger("PowerAttack");
-        playerHealth.SubtractStamina(10);
+        health.SubtractStamina(10);
         StartCoroutine(AttackVFX(0.6f, 0.6f, powerAttackDamage));
     }
 
@@ -206,7 +209,7 @@ public class PlayerController : MonoBehaviour
         if (onGround)
         {
             animator.SetTrigger("Jump");
-            playerHealth.SubtractStamina(10);
+            health.SubtractStamina(10);
         }
     }
 
@@ -221,7 +224,7 @@ public class PlayerController : MonoBehaviour
         {
             isRolling = true;
             animator.SetTrigger("Roll");
-            playerHealth.SubtractStamina(10);
+            health.SubtractStamina(10);
         }
     }
 
