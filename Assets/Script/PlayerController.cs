@@ -56,12 +56,13 @@ public class PlayerController : MonoBehaviour
         GroundCheck();
         GetAxis();
         OtherActions();
-
     }
 
     float pressTime = 0;
+    public bool isInteracting;
     private void OtherActions()
     {
+        if (isInteracting) return;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
@@ -77,7 +78,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.Mouse0))
         {
             pressTime += Time.deltaTime;
-            if (pressTime > 3)
+            if (pressTime > 2)
             {
                 PowerAttack();
                 pressTime = 0;
@@ -114,9 +115,17 @@ public class PlayerController : MonoBehaviour
 
     private void DrinkBehavior()
     {
+        StartCoroutine(DrinkVFX());
+    }
+
+    IEnumerator DrinkVFX()
+    {
+        isAttacking = true;
         animator.SetTrigger("Drink");
         gameManager.UsePostion();
         health.HealHealth(healPoint);
+        yield return new WaitForSeconds(1f);
+        isAttacking = false;
     }
 
     void Pickup()
@@ -173,7 +182,6 @@ public class PlayerController : MonoBehaviour
   
     private void Attack()
     {
-        if (npcBehavior != null && npcBehavior.interactionReady) return;
         animator.SetTrigger("Slash");
         StartCoroutine(AttackVFX(0.3f, 0.6f, attackDamage));
     }

@@ -6,15 +6,16 @@ using UnityEngine.UI;
 public class NPCBehavior : MonoBehaviour
 {
     public Button triggerButton;
-    public bool interactionReady;
     
 
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            interactionReady = true;
             triggerButton.image.enabled = true;
+
+            var playerController = other.GetComponent<PlayerController>();
+            playerController.isInteracting = true;
         }
     }
 
@@ -22,8 +23,11 @@ public class NPCBehavior : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            interactionReady = false;
             triggerButton.image.enabled = false;
+
+            var playerController = other.GetComponent<PlayerController>();
+            playerController.isInteracting = false;
+            
             DialogueManager.instance.EndDialouge();
         }
     }

@@ -73,14 +73,16 @@ public class Health : MonoBehaviour
             DeathBehavior();
         }
 
-        //NaturalHeal();
+        NaturalStaminaRecovery();
     }
 
-    private void NaturalHeal()
+    private void NaturalStaminaRecovery()
     {
-        if (currentHealth < maxHealth)
+        if (currentStamina < maxStamina)
         {
-            currentHealth += 1 *Time.deltaTime*0.5f;
+            currentStamina += 1 *Time.deltaTime*0.5f;
+            float percentage = currentStamina / maxStamina;
+            OnStaminaPctChange(percentage);
         }
         return;
     }
@@ -112,17 +114,12 @@ public class Health : MonoBehaviour
 
     public void HealHealth(int recovery)
     {
+        if (currentHealth >= recovery) return;
         currentHealth += recovery;
         float percentage = currentHealth / maxHealth;
         OnHealthPctChange(percentage);
     }
 
-    public void HealStamina(int recovery)
-    {
-        currentStamina += recovery;
-        float percentage = currentStamina / maxStamina;
-        OnStaminaPctChange(percentage);
-    }
 
     public void Invincible()
     {

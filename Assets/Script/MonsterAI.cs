@@ -26,12 +26,16 @@ public class MonsterAI : MonoBehaviour
     public float suspicionTime =3;
     public EnemyHealth enemyHealth;
     public bool isStunned;
+
+    enum EnemyState {ES_Idle, ES_Attack, ES_Chase, ES_Stunned};
+    EnemyState enemyState;
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         enemyHealth = GetComponent<EnemyHealth>();
         target = GameObject.FindWithTag("Player").transform;
+        enemyState = EnemyState.ES_Idle;
     }
 
     public bool TargetInRange()
@@ -80,8 +84,12 @@ public class MonsterAI : MonoBehaviour
 
     public virtual void GetStunned(float stunTime)
     {
-        StopAllCoroutines();
-        StartCoroutine(StunnedBehavior(stunTime));
+        enemyState = EnemyState.ES_Stunned;
+        if (enemyState == EnemyState.ES_Stunned)
+        {
+            StopAllCoroutines();
+            StartCoroutine(StunnedBehavior(stunTime));
+        }
     }
 
     public virtual IEnumerator StunnedBehavior(float stunTime)
@@ -164,8 +172,6 @@ public class MonsterAI : MonoBehaviour
         {
             AttackTarget();
         }
-
-
     }
 
     public void ChaseTarget()
@@ -175,9 +181,12 @@ public class MonsterAI : MonoBehaviour
     }
     public virtual void AttackTarget()
     {
-        FaceTarget();
-        anim.SetTrigger("Attack");
-        
+        enemyState = EnemyState.ES_Attack;
+        if (enemyState == EnemyState.ES_Attack)
+        {
+            FaceTarget();
+            anim.SetTrigger("Attack");
+        }
     }
 
     //Gizmo 

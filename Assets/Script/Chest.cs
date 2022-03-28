@@ -5,7 +5,7 @@ using UnityEngine;
 public class Chest : MonoBehaviour
 {
     Animator anim;
-    [SerializeField] GameObject content;
+    [SerializeField] GameObject[] contents;
     [SerializeField] Transform spawnPoint;
     [SerializeField] bool openReady;
     [SerializeField] bool boxUsed;
@@ -33,10 +33,11 @@ public class Chest : MonoBehaviour
 
     IEnumerator ItemPopup()
     {
+        int randomNo = Random.Range(0, 2);
         boxUsed = true;
         anim.GetComponent<Animator>().SetTrigger("Open");
         yield return new WaitForSeconds(1f);
-        Instantiate(content, spawnPoint.position, Quaternion.identity);
+        Instantiate(contents[randomNo], spawnPoint.position, Quaternion.identity);
         yield return null;
     }
 

@@ -133,7 +133,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbcb5612abbbd4f45aaef0a6115bb124, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  content: {fileID: 5370138718359569179, guid: 9c31a25eacf7fc74aa5590b907de9f04, type: 3}
+  contents:
+  - {fileID: 5370138718359569179, guid: 9c31a25eacf7fc74aa5590b907de9f04, type: 3}
+  - {fileID: 6588100232647045433, guid: 07cd05b160ed18641a359cb7c19421f7, type: 3}
   spawnPoint: {fileID: 6751020880898249463}
   openReady: 0
   boxUsed: 0
