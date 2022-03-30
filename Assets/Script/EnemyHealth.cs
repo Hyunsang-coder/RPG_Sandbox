@@ -21,6 +21,11 @@ public class EnemyHealth: MonoBehaviour
         currentHealth = maxHP;
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+    }
+
+    private void Start()
+    {
+
         gameManager = FindObjectOfType<GameManager>();
     }
 

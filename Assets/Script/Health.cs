@@ -23,7 +23,7 @@ public class Health : MonoBehaviour
     {
         currentHealth = maxHealth;
         currentStamina = maxStamina;
-        GameManager.OnLevelUP += LevelUpBonus;
+        GameManager.OnLevelUp += LevelUpBonus;
         
     }
 
@@ -59,6 +59,7 @@ public class Health : MonoBehaviour
 
     private void ShowLvUpEffect()
     {
+        FindObjectOfType<SoundManager>().PlayAudio("LevelUp");
         currentHealth = maxHealth;
         currentStamina = maxStamina;
         OnHealthPctChange(100);
@@ -139,7 +140,7 @@ public class Health : MonoBehaviour
 
     private void OnDisable()
     {
-        GameManager.OnLevelUP -= LevelUpBonus;
+        GameManager.OnLevelUp -= LevelUpBonus;
     }
 
 

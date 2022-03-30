@@ -10,6 +10,7 @@ public class Throwable : MonoBehaviour
     Rigidbody rigidbody;
     SphereCollider collider;
     MeshRenderer meshRendere;
+    SoundManager soundManager;
     void Awake()
     {
         meshRendere = GetComponent<MeshRenderer>();
@@ -17,6 +18,7 @@ public class Throwable : MonoBehaviour
         rigidbody = GetComponentInChildren<Rigidbody>();
         collider = GetComponentInChildren<SphereCollider>();
         particleSystem.Pause();
+        soundManager = FindObjectOfType<SoundManager>();
     }
 
     private void OnEnable()
@@ -31,6 +33,8 @@ public class Throwable : MonoBehaviour
         rigidbody.freezeRotation = true;
         transform.rotation = Quaternion.Euler(0, 0, 0);
         particleSystem.Play();
+        soundManager.PlayAudio("FlashBang");
+
         collider.enabled = true;
     }
 

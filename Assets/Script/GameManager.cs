@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static event Action<int> OnLevelUP = delegate { };
+    public static event Action<int> OnLevelUp = delegate { };
 
     [SerializeField] Canvas GameOverCanvas;
     public int flashBangQty = 0;
@@ -17,17 +17,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] int playerXP = 0;
 
 
-    private void Awake()
-    {
-        playerController = FindObjectOfType<PlayerController>();
-        playerUI = FindObjectOfType<PlayerUI>();    
-    }
+    
     void OnEnable()
     {
         Health.OnDeath += GameOverMenu;;
+    }
+
+    private void Start()
+    {
+        playerController = FindObjectOfType<PlayerController>();
+        playerUI = FindObjectOfType<PlayerUI>();
+        GameOverCanvas = GameObject.FindWithTag("GameOverCanvas").GetComponent<Canvas>();
         GameOverCanvas.enabled = false;
     }
-    
+
     public void GainExperience(int xp)
     {
         playerXP += xp;
@@ -53,7 +56,7 @@ public class GameManager : MonoBehaviour
                 playerLevel = 5;
                 if (lv5First)
                 {
-                    OnLevelUP(playerLevel);
+                    OnLevelUp(playerLevel);
                     lv5First = false;
                 }
                 break;
@@ -61,7 +64,7 @@ public class GameManager : MonoBehaviour
                 playerLevel = 4;
                 if (lv4First)
                 {
-                    OnLevelUP(playerLevel);
+                    OnLevelUp(playerLevel);
                     lv4First = false;
                 }
                 break;
@@ -69,7 +72,7 @@ public class GameManager : MonoBehaviour
                 playerLevel = 3;
                 if (lv3First)
                 {
-                    OnLevelUP(playerLevel);
+                    OnLevelUp(playerLevel);
                     lv3First = false;
                 }
                 break;
@@ -77,13 +80,20 @@ public class GameManager : MonoBehaviour
                 playerLevel = 2;
                 if (lv2First)
                 {
-                    OnLevelUP(playerLevel);
+                    OnLevelUp(playerLevel);
                     lv2First = false;
                 }
                 break;
             default:
                 playerLevel = 1;
                 break;
+        }
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ReloadScene();
         }
     }
 

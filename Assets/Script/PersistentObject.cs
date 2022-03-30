@@ -4,22 +4,27 @@ using UnityEngine;
 
 public class PersistentObject : MonoBehaviour
 {
-    //PersistentObject[] persistentObjects;
-    public static PersistentObject instance;
+    [SerializeField] GameObject[] objects;
+    
+    // static을 해야 또 다른 인스턴스에서 해당 bool에 접근 가능
+    static bool hasSpawned = false;
     void Awake()
     {
+        if (hasSpawned) return;
+
+
+        SpawnPersistentObject();
         
-        //persistentObjects = FindObjectsOfType<PersistentObject>();
-        //if (persistentObjects.Length > 1)
-        
-        if (instance != null)
+
+        hasSpawned = true;
+    }
+
+    void SpawnPersistentObject()
+    {
+        foreach (var obj in objects)
         {
-            Destroy(gameObject);
-        } 
-        else
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
+            GameObject persistentObject = Instantiate(obj);
+            DontDestroyOnLoad(persistentObject);
         }
     }
 

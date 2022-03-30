@@ -5,6 +5,7 @@ using UnityEngine;
 public class Chest : MonoBehaviour
 {
     Animator anim;
+    SoundManager soundManager;
     [SerializeField] GameObject[] contents;
     [SerializeField] Transform spawnPoint;
     [SerializeField] bool openReady;
@@ -13,6 +14,8 @@ public class Chest : MonoBehaviour
     private void Start()
     {
         anim = GetComponent<Animator>();
+        soundManager = FindObjectOfType<SoundManager>();
+        
     }
     private void OnTriggerStay(Collider other)
     {
@@ -35,7 +38,10 @@ public class Chest : MonoBehaviour
     {
         int randomNo = Random.Range(0, 2);
         boxUsed = true;
-        anim.GetComponent<Animator>().SetTrigger("Open");
+        anim.SetTrigger("Open");
+        
+        soundManager.PlayAudio("OpenChest");
+
         yield return new WaitForSeconds(1f);
         Instantiate(contents[randomNo], spawnPoint.position, Quaternion.identity);
         yield return null;

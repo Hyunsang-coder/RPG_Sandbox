@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
     NPCBehavior npcBehavior;
     GameManager gameManager;
     PlayerUI playerUI;
+    SoundManager soundManager;
 
 
     void Start()
@@ -47,6 +48,7 @@ public class PlayerController : MonoBehaviour
         npcBehavior = FindObjectOfType<NPCBehavior>();
         gameManager = FindObjectOfType<GameManager>();
         playerUI = FindObjectOfType<PlayerUI>();
+        soundManager = FindObjectOfType<SoundManager>();
     }
 
     void Update()
@@ -163,6 +165,7 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         if (isRolling || isAttacking) return;
+
         
         Vector3 moveVector = new Vector3(horizontal, 0, vertical).normalized;
         desiredSpeed = moveVector.magnitude * maxSpeed;
@@ -177,12 +180,16 @@ public class PlayerController : MonoBehaviour
         //transform.position += moveVector * moveSpeed * Time.deltaTime;
 
         animator.SetFloat("MoveSpeed", moveSpeed);
-        
+        if (moveSpeed > 0)
+        {
+            soundManager.PlayWholeAudio("Footstep");
+        }
     }
   
     private void Attack()
     {
         animator.SetTrigger("Slash");
+        soundManager.PlayWholeAudio("Slash");
         StartCoroutine(AttackVFX(0.3f, 0.6f, attackDamage));
     }
 
@@ -194,7 +201,6 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         sword.GetComponentInChildren<TrailRenderer>().enabled = true;
         sword.GetComponent<BoxCollider>().enabled = true;
-        Debug.Log("Damage!!");
         yield return new WaitForSeconds(finishTime);
         sword.GetComponent<BoxCollider>().enabled = false;
         sword.GetComponentInChildren<TrailRenderer>().enabled = false;
@@ -217,6 +223,8 @@ public class PlayerController : MonoBehaviour
         if (onGround)
         {
             animator.SetTrigger("Jump");
+            soundManager.PlayAudio("Jump");
+
             health.SubtractStamina(10);
         }
     }
